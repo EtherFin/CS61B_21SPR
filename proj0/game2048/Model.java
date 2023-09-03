@@ -1,5 +1,6 @@
 package game2048;
 
+import javax.print.attribute.standard.NumberOfDocuments;
 import java.util.Formatter;
 import java.util.Observable;
 
@@ -113,6 +114,109 @@ public class Model extends Observable {
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
+        // *************************************************************************************************************
+        if (side == Side.NORTH) {
+            for(int j = 0; j < board.size(); j++){
+                for(int r = 0; r < board.size(); r++) {  // 给格子一个值
+                    for (int i = r; i < board.size(); i++) {  // 检索每列的每个元素，从第一个非空元素起，检索该元素之下的最近非空元素，若相等则合并，若不等则移动至下一个位置，这样的判断行为应该进行三次就可以遍历所有四个格子
+                        if (board.tile(i, j) != null) {  // 选择非空元素
+                            if (i != r) { // 将第一个非空元素移动至第一个非空格
+                                board.move(r, j, board.tile(i, j));
+                                changed = true;
+                            }
+                            for (int k = i + 1; k < board.size(); i++) {  // 对第一个非空之后进行检索并合并，或不做操作
+                                if (board.tile(k, j) != null) {
+                                    if (board.tile(k, j).value() != board.tile(r, j).value()) {  // 如果下一个非空元素不等，则将r向下移动一格，把非空元素移动到（r， j）
+                                        r += 1;
+                                    }
+                                    board.move(r, j, board.tile(k, j));
+                                    score += board.tile(r, j).value() * 2;
+                                    changed = true;
+                                    break;  // 同理，只检索第一个符合条件的元素
+                                }
+                            }
+                            break;  // 利用break只检索第一个非空元素
+                        }
+                    }
+                }
+            }
+        } else if (side == Side.SOUTH) {
+            board.setViewingPerspective(Side.SOUTH);
+            for(int j = 0; j < board.size(); j++){
+                for(int r = 0; r < board.size(); r++) {  // 给格子一个值
+                    for (int i = r; i < board.size(); i++) {  // 检索每列的每个元素，从第一个非空元素起，检索该元素之下的最近非空元素，若相等则合并，若不等则移动至下一个位置，这样的判断行为应该进行三次就可以遍历所有四个格子
+                        if (board.tile(i, j) != null) {  // 选择非空元素
+                            if (i != r) { // 将第一个非空元素移动至第一个非空格
+                                board.move(r, j, board.tile(i, j));
+                                changed = true;
+                            }
+                            for (int k = i + 1; k < board.size(); i++) {  // 对第一个非空之后进行检索并合并，或不做操作
+                                if (board.tile(k, j) != null) {
+                                    if (board.tile(k, j).value() != board.tile(r, j).value()) {  // 如果下一个非空元素不等，则将r向下移动一格，把非空元素移动到（r， j）
+                                        r += 1;
+                                    }
+                                    board.move(r, j, board.tile(k, j));
+                                    changed = true;
+                                    break;  // 同理，只检索第一个符合条件的元素
+                                }
+                            }
+                            break;  // 利用break只检索第一个非空元素
+                        }
+                    }
+                }
+            }
+        } else if (side == Side.WEST) {
+            board.setViewingPerspective(Side.WEST);
+            for(int j = 0; j < board.size(); j++){
+                for(int r = 0; r < board.size(); r++) {  // 给格子一个值
+                    for (int i = r; i < board.size(); i++) {  // 检索每列的每个元素，从第一个非空元素起，检索该元素之下的最近非空元素，若相等则合并，若不等则移动至下一个位置，这样的判断行为应该进行三次就可以遍历所有四个格子
+                        if (board.tile(i, j) != null) {  // 选择非空元素
+                            if (i != r) { // 将第一个非空元素移动至第一个非空格
+                                board.move(r, j, board.tile(i, j));
+                                changed = true;
+                            }
+                            for (int k = i + 1; k < board.size(); i++) {  // 对第一个非空之后进行检索并合并，或不做操作
+                                if (board.tile(k, j) != null) {
+                                    if (board.tile(k, j).value() != board.tile(r, j).value()) {  // 如果下一个非空元素不等，则将r向下移动一格，把非空元素移动到（r， j）
+                                        r += 1;
+                                    }
+                                    board.move(r, j, board.tile(k, j));
+                                    changed = true;
+                                    break;  // 同理，只检索第一个符合条件的元素
+                                }
+                            }
+                            break;  // 利用break只检索第一个非空元素
+                        }
+                    }
+                }
+            }
+        } else if (side == Side.EAST) {
+            board.setViewingPerspective(Side.EAST);
+            for(int j = 0; j < board.size(); j++){
+                for(int r = 0; r < board.size(); r++) {  // 给格子一个值
+                    for (int i = r; i < board.size(); i++) {  // 检索每列的每个元素，从第一个非空元素起，检索该元素之下的最近非空元素，若相等则合并，若不等则移动至下一个位置，这样的判断行为应该进行三次就可以遍历所有四个格子
+                        if (board.tile(i, j) != null) {  // 选择非空元素
+                            if (i != r) { // 将第一个非空元素移动至第一个非空格
+                                board.move(r, j, board.tile(i, j));
+                                changed = true;
+                            }
+                            for (int k = i + 1; k < board.size(); i++) {  // 对第一个非空之后进行检索并合并，或不做操作
+                                if (board.tile(k, j) != null) {
+                                    if (board.tile(k, j).value() != board.tile(r, j).value()) {  // 如果下一个非空元素不等，则将r向下移动一格，把非空元素移动到（r， j）
+                                        r += 1;
+                                    }
+                                    board.move(r, j, board.tile(k, j));
+                                    changed = true;
+                                    break;  // 同理，只检索第一个符合条件的元素
+                                }
+                            }
+                            break;  // 利用break只检索第一个非空元素
+                        }
+                    }
+                }
+            }
+        }
+        // *************************************************************************************************************
 
         checkGameOver();
         if (changed) {
@@ -138,6 +242,15 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
+        for(int i = 0; i < b.size(); i++){ //面板为正方形
+            for(int j = 0; j < b.size(); j++){
+                if (b.tile(i, j) == null) {
+                    return true;
+                } else {
+                    continue;
+                }
+            }
+        }
         return false;
     }
 
@@ -148,6 +261,18 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        for(int i = 0; i < b.size(); i++){
+            for(int j = 0; j < b.size(); j++) {
+                if (b.tile(i, j) == null){
+                    continue;
+                }
+                if (b.tile(i, j).value() == MAX_PIECE) {
+                    return true;
+                } else {
+                    continue;
+                }
+            }
+        }
         return false;
     }
 
@@ -159,6 +284,26 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        for(int i = 0; i < b.size(); i++){ //面板为正方形
+            for(int j = 0; j < b.size(); j++){
+                if (b.tile(i, j) == null){
+                    return true;
+                }else continue;
+            }
+        }
+        for(int i = 0; i < b.size(); i++){ //面板为正方形
+            for(int j = 0; j < b.size(); j++){
+                if (0 <= i-1 && b.tile(i-1, j).value() == b.tile(i, j).value()){
+                    return true;
+                } else if (i+1 < b.size() && b.tile(i+1, j).value() == b.tile(i, j).value()) {
+                    return true;
+                } else if (0 <= j-1 && b.tile(i, j-1).value() == b.tile(i, j).value()) {
+                    return true;
+                } else if (j+1 < b.size() && b.tile(i, j+1).value() == b.tile(i, j).value()) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
