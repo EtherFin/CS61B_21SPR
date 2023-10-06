@@ -1,12 +1,14 @@
 package game2048;
 
 import javax.print.attribute.standard.NumberOfDocuments;
+import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.Observable;
 
 
 /** The state of a game of 2048.
  *  @author TODO: YOUR NAME HERE
+ * @author Fin.
  */
 public class Model extends Observable {
     /** Current contents of the board. */
@@ -110,114 +112,110 @@ public class Model extends Observable {
     public boolean tilt(Side side) {
         boolean changed;
         changed = false;
+//         TODO: Modify this.board (and perhaps this.score) to account
+//         for the tilt to the Side SIDE. If the board changed, set the
+//         changed local variable to true.
 
-        // TODO: Modify this.board (and perhaps this.score) to account
-        // for the tilt to the Side SIDE. If the board changed, set the
-        // changed local variable to true.
-        // *************************************************************************************************************
-        if (side == Side.NORTH) {
-            for(int j = 0; j < board.size(); j++){
-                for(int r = 0; r < board.size(); r++) {  // 给格子一个值
-                    for (int i = r; i < board.size(); i++) {  // 检索每列的每个元素，从第一个非空元素起，检索该元素之下的最近非空元素，若相等则合并，若不等则移动至下一个位置，这样的判断行为应该进行三次就可以遍历所有四个格子
-                        if (board.tile(i, j) != null) {  // 选择非空元素
-                            if (i != r) { // 将第一个非空元素移动至第一个非空格
-                                board.move(r, j, board.tile(i, j));
-                                changed = true;
-                            }
-                            for (int k = i + 1; k < board.size(); i++) {  // 对第一个非空之后进行检索并合并，或不做操作
-                                if (board.tile(k, j) != null) {
-                                    if (board.tile(k, j).value() != board.tile(r, j).value()) {  // 如果下一个非空元素不等，则将r向下移动一格，把非空元素移动到（r， j）
-                                        r += 1;
-                                    }
-                                    board.move(r, j, board.tile(k, j));
-                                    score += board.tile(r, j).value() * 2;
-                                    changed = true;
-                                    break;  // 同理，只检索第一个符合条件的元素
-                                }
-                            }
-                            break;  // 利用break只检索第一个非空元素
-                        }
+//        board.setViewingPerspective(side);
+//        boolean[][] is_merge = new boolean[board.size()][board.size()];
+//        for (int i = board.size() - 2; i >= 0; i -= 1) {
+//            for (int j = 0; j < board.size(); j += 1) {
+//                Tile t = board.tile(j, i);
+//                if (t == null) {
+//                    continue;
+//                }
+//                for (int k = i + 1; k < board.size(); k += 1) {
+//                    Tile next = board.tile(j, k);
+//
+//                    if (next == null && k < board.size() - 1) {
+//                        continue;
+//                    }
+//
+//                    if (next != null && (next.value() != t.value() ||
+//                            (next.value() == t.value() && is_merge[k][j]))) {
+//                        if (k - 1 != i) {
+//                            board.move(j, k - 1, t);
+//                            changed = true;
+//                        }
+//                        break;
+//                    } else {
+//                        boolean moved = board.move(j, k, t);
+//                        changed = true;
+//                        if (moved) {
+//                            score += board.tile(j, k).value();
+//                            is_merge[k][j] = true;
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        board.setViewingPerspective(Side.NORTH);
+
+        board.setViewingPerspective(side);
+        for(int i = 0; i < board.size(); i++){
+
+            //紧凑
+            ArrayList<Integer> values = new ArrayList<Integer>();
+            for(int j = board.size() - 1; j > -1; j--){
+                Tile tile = board.tile(i, j);
+                if(tile == null){
+                    continue;
+                }else{
+                    values.add(tile.value());
+                    int len = values.size();
+                    if((board.size() - len) != j){
+                        changed = true;
                     }
+                    board.move(i, board.size() - len, tile);
                 }
             }
-        } else if (side == Side.SOUTH) {
-            board.setViewingPerspective(Side.SOUTH);
-            for(int j = 0; j < board.size(); j++){
-                for(int r = 0; r < board.size(); r++) {  // 给格子一个值
-                    for (int i = r; i < board.size(); i++) {  // 检索每列的每个元素，从第一个非空元素起，检索该元素之下的最近非空元素，若相等则合并，若不等则移动至下一个位置，这样的判断行为应该进行三次就可以遍历所有四个格子
-                        if (board.tile(i, j) != null) {  // 选择非空元素
-                            if (i != r) { // 将第一个非空元素移动至第一个非空格
-                                board.move(r, j, board.tile(i, j));
-                                changed = true;
-                            }
-                            for (int k = i + 1; k < board.size(); i++) {  // 对第一个非空之后进行检索并合并，或不做操作
-                                if (board.tile(k, j) != null) {
-                                    if (board.tile(k, j).value() != board.tile(r, j).value()) {  // 如果下一个非空元素不等，则将r向下移动一格，把非空元素移动到（r， j）
-                                        r += 1;
-                                    }
-                                    board.move(r, j, board.tile(k, j));
-                                    changed = true;
-                                    break;  // 同理，只检索第一个符合条件的元素
-                                }
-                            }
-                            break;  // 利用break只检索第一个非空元素
-                        }
+
+            for(int j = board.size() - 1; j > -1; j--){
+                if(board.tile(i, j) == null){
+                    continue;
+                }
+                if(board.tile(i, j - 1) != null) {
+                    if (board.tile(i, j).value() == board.tile(i, j - 1).value()) {
+                        board.move(i, j, board.tile(i, j - 1));
+                        score += board.tile(i, j).value();
+                        changed = true;
                     }
                 }
-            }
-        } else if (side == Side.WEST) {
-            board.setViewingPerspective(Side.WEST);
-            for(int j = 0; j < board.size(); j++){
-                for(int r = 0; r < board.size(); r++) {  // 给格子一个值
-                    for (int i = r; i < board.size(); i++) {  // 检索每列的每个元素，从第一个非空元素起，检索该元素之下的最近非空元素，若相等则合并，若不等则移动至下一个位置，这样的判断行为应该进行三次就可以遍历所有四个格子
-                        if (board.tile(i, j) != null) {  // 选择非空元素
-                            if (i != r) { // 将第一个非空元素移动至第一个非空格
-                                board.move(r, j, board.tile(i, j));
-                                changed = true;
-                            }
-                            for (int k = i + 1; k < board.size(); i++) {  // 对第一个非空之后进行检索并合并，或不做操作
-                                if (board.tile(k, j) != null) {
-                                    if (board.tile(k, j).value() != board.tile(r, j).value()) {  // 如果下一个非空元素不等，则将r向下移动一格，把非空元素移动到（r， j）
-                                        r += 1;
-                                    }
-                                    board.move(r, j, board.tile(k, j));
-                                    changed = true;
-                                    break;  // 同理，只检索第一个符合条件的元素
-                                }
-                            }
-                            break;  // 利用break只检索第一个非空元素
+
+                values = new ArrayList<Integer>();//再次紧凑
+                for(int k = board.size() - 1; k > -1; k--){
+                    Tile tile = board.tile(i, k);
+                    if(tile == null){
+                        continue;
+                    }else{
+                        values.add(tile.value());
+                        int len = values.size();
+                        if((board.size() - len) != j){
+                            changed = true;
                         }
+                        board.move(i, board.size() - len, tile);
                     }
                 }
+
             }
-        } else if (side == Side.EAST) {
-            board.setViewingPerspective(Side.EAST);
-            for(int j = 0; j < board.size(); j++){
-                for(int r = 0; r < board.size(); r++) {  // 给格子一个值
-                    for (int i = r; i < board.size(); i++) {  // 检索每列的每个元素，从第一个非空元素起，检索该元素之下的最近非空元素，若相等则合并，若不等则移动至下一个位置，这样的判断行为应该进行三次就可以遍历所有四个格子
-                        if (board.tile(i, j) != null) {  // 选择非空元素
-                            if (i != r) { // 将第一个非空元素移动至第一个非空格
-                                board.move(r, j, board.tile(i, j));
-                                changed = true;
-                            }
-                            for (int k = i + 1; k < board.size(); i++) {  // 对第一个非空之后进行检索并合并，或不做操作
-                                if (board.tile(k, j) != null) {
-                                    if (board.tile(k, j).value() != board.tile(r, j).value()) {  // 如果下一个非空元素不等，则将r向下移动一格，把非空元素移动到（r， j）
-                                        r += 1;
-                                    }
-                                    board.move(r, j, board.tile(k, j));
-                                    changed = true;
-                                    break;  // 同理，只检索第一个符合条件的元素
-                                }
-                            }
-                            break;  // 利用break只检索第一个非空元素
-                        }
+
+            values = new ArrayList<Integer>();
+            for(int j = board.size() - 1; j > -1; j--){
+                Tile tile = board.tile(i, j);
+                if(tile == null){
+                    continue;
+                }else{
+                    values.add(tile.value());
+                    int len = values.size();
+                    if((board.size() - len) != j){
+                        changed = true;
                     }
+                    board.move(i, board.size() - len, tile);
                 }
             }
         }
-        // *************************************************************************************************************
-
+        board.setViewingPerspective(Side.NORTH);
         checkGameOver();
         if (changed) {
             setChanged();
